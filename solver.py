@@ -107,26 +107,32 @@ class Solver:
             return
         last_guess = guesses.pop()
         if isinstance(last_guess, CellGuess):
-            guess_value = nonogram.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
-            Solver.revert_guess(nonogram, last_guess)
-            if guess_value == "0":
-                Solver.get_next_guess(nonogram, guesses, True)
-            elif guess_value == "1":
-                guesses.append(CellGuess(last_guess.pos))
-                nonogram.update_at_pos(last_guess.pos, "0")
-            else:
-                raise Exception("Error: a previous guess did not update the Nonogram")
-        if isinstance(last_guess, SequenceGuess):
-            last_guess_value = nonogram.sequences[last_guess.line_type][last_guess.index].value
-            solutions_list = nonogram.sequences[last_guess.line_type][last_guess.index].solutions
-            last_guess_index = solutions_list.index(last_guess_value)
-            Solver.revert_guess(nonogram, last_guess)
-            if last_guess_index + 1 < len(solutions_list):
-                next_guess_value = solutions_list[last_guess_index + 1]
-                guesses.append(SequenceGuess(last_guess.line_type, last_guess.index, next_guess_value, last_guess.old_value))
-                nonogram.update_single_sequence(last_guess.line_type, last_guess.index, next_guess_value)
-            else:
-                Solver.get_next_guess(nonogram, True)
+            Solver.get_next_cell_guess(last_guess, guesses)
+        elif isinstance(last_guess, SequenceGuess):
+            Solver.get_next_sequence_guess(last_guess, guesses)
+    
+    def get_next_cell_guess(nonogram, last_guess, guesses):
+        guess_value = nonogram.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
+        Solver.revert_guess(nonogram, last_guess)
+        if guess_value == "0":
+            Solver.get_next_guess(nonogram, guesses, True)
+        elif guess_value == "1":
+            guesses.append(CellGuess(last_guess.pos))
+            nonogram.update_at_pos(last_guess.pos, "0")
+        else:
+            raise Exception("Error: a previous guess did not update the Nonogram")
+    
+    def get_next_sequence_guess(nonogram, last_guess, guesses):
+        last_guess_value = nonogram.sequences[last_guess.line_type][last_guess.index].value
+        solutions_list = nonogram.sequences[last_guess.line_type][last_guess.index].solutions
+        last_guess_index = solutions_list.index(last_guess_value)
+        Solver.revert_guess(nonogram, last_guess)
+        if last_guess_index + 1 < len(solutions_list):
+            next_guess_value = solutions_list[last_guess_index + 1]
+            guesses.append(SequenceGuess(last_guess.line_type, last_guess.index, next_guess_value, last_guess.old_value))
+            nonogram.update_single_sequence(last_guess.line_type, last_guess.index, next_guess_value)
+        else:
+            Solver.get_next_guess(nonogram, guesses, True)
 
     @staticmethod
     def solve(*args):
