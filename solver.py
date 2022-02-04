@@ -107,9 +107,9 @@ class Solver:
             return
         last_guess = guesses.pop()
         if isinstance(last_guess, CellGuess):
-            Solver.get_next_cell_guess(last_guess, guesses)
+            Solver.get_next_cell_guess(nonogram, last_guess, guesses)
         elif isinstance(last_guess, SequenceGuess):
-            Solver.get_next_sequence_guess(last_guess, guesses)
+            Solver.get_next_sequence_guess(nonogram, last_guess, guesses)
     
     def get_next_cell_guess(nonogram, last_guess, guesses):
         guess_value = nonogram.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
