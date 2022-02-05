@@ -1,5 +1,4 @@
 import re
-from random import choice
 from nonogram import Nonogram
 
 class Guess:
@@ -81,7 +80,7 @@ class Solver:
     @staticmethod
     def guess_cell(nonogram, guesses):
         """Adds a new CellGuess object to the guesses list, updates the nonogram object to reflect this guess."""
-        pos = choice(list(nonogram.unsolved))
+        pos = list(nonogram.unsolved)[0]
         guesses.append(CellGuess(pos))
         nonogram.update_at_pos(pos, "1")
 
