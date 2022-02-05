@@ -158,7 +158,7 @@ class Solver:
             if deduction_result > 0:
                 continue
             elif len(nonogram.unsolved) == 0:
-                return nonogram.get_grid()
+                return nonogram
             elif deduction_result == 0:
                 Solver.get_next_guess(nonogram, guesses, False)
             elif deduction_result == -1 and not guesses:
