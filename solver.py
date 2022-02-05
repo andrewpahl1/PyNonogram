@@ -1,6 +1,9 @@
 import re
 from nonogram import Nonogram
 
+class UnsolvableError(Exception):
+    pass
+
 class Guess:
     """Parent class of CellGuess and SequenceGuess."""
 
@@ -104,7 +107,7 @@ class Solver:
     def get_next_guess(nonogram, guesses, revert):
         """Determines the next step to take in the guess-and-check algorithm. Identifies when the nonogram is unsolvable."""
         if not guesses and revert:
-            raise Exception("Not solvable")
+            raise UnsolvableError("This nonogram cannot be solved.")
         if not guesses:
             nonogram.update_known_solution_sets()
         if not revert:
@@ -159,6 +162,6 @@ class Solver:
             elif deduction_result == 0:
                 Solver.get_next_guess(nonogram, guesses, False)
             elif deduction_result == -1 and not guesses:
-                raise Exception("Not solvable")
+                raise UnsolvableError("This nonogram cannot be solved.")
             else:
                 Solver.get_next_guess(nonogram, guesses, True)
