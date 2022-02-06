@@ -29,7 +29,7 @@ This program expects a tuple containing two tuples that represent a nonogram's c
 
 (((1,2),(4,),(2,2),(1,),(1,)),((3,),(3,),(1,),(3,),(3,)))
 
-Vertical clues are: ((1,2),(4,),(2,2),(1,),(1,))
+Vertical clues are: ((1,2),(4,),(2,2),(1,),(1,))  
 Horizontal clues are: ((3,),(3,),(1,),(3,),(3,))
 
 Empty clues (i.e. clues indicating that there are no filled cells in the row/column) should be represented by empty tuples.
