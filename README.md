@@ -14,8 +14,7 @@ PyNonogram aims to quickly solve nonograms of any size using a combination of re
 4. A solved Nonogram object will be returned (see Output section).
 
 ### Example code
-
-import nonogram  
+ 
 import solver
 
 clues = (((1,2),(4,),(2,2),(1,),(1,)),((3,),(3,),(1,),(3,),(3,)))
