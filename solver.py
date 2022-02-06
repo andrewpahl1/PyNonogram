@@ -104,6 +104,7 @@ class Solver:
         elif isinstance(guess, CellGuess):
             nonogram.update_at_pos(guess.pos, "x")
 
+    @staticmethod
     def get_next_guess(nonogram, guesses, revert):
         """Determines the next step to take in the guess-and-check algorithm. Identifies when the nonogram is unsolvable."""
         if not guesses and revert:
@@ -123,6 +124,7 @@ class Solver:
         elif isinstance(last_guess, SequenceGuess):
             Solver.get_next_sequence_guess(nonogram, last_guess, guesses)
     
+    @staticmethod
     def get_next_cell_guess(nonogram, last_guess, guesses):
         """Called when the last CellGuess lead to the nonogram being unsolvable. Reverts that guess and either changes its value to unfilled (if its value was previously filled) or reverts the last two guesses and makes a new guess (if both guessing filled and unfilled for the last cell made the nonogram unsolvable)."""
         guess_value = nonogram.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
@@ -135,6 +137,7 @@ class Solver:
         else:
             raise Exception("Error: a previous guess did not update the Nonogram")
     
+    @staticmethod
     def get_next_sequence_guess(nonogram, last_guess, guesses):
         """Called when the last SequenceGuess lead to the nonogram being unsolvable. Either changes that guess to the next value in that sequence's solutions variable, or reverts the last two guesses and makes a new guess."""
         last_guess_value = nonogram.sequences[last_guess.line_type][last_guess.index].value
