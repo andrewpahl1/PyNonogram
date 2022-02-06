@@ -39,9 +39,13 @@ Empty clues (i.e. clues indicating that there are no filled cells in the row/col
 The Solver.solve method returns a solved Nonogram object. Printing this object to the console shows a visual representation of the solved puzzle. Example:
 
 ░░███
+
 ███░░
+
 ░█░░░
+
 ███░░
+
 ███░░
 
 The get_grid() method of a Nonogram object will return a tuple of tuples representing the rows of the solved nonogram. Calling this method on the puzzle above returns the following:
