@@ -15,12 +15,12 @@ PyNonogram aims to quickly solve nonograms of any size using a combination of re
 
 ### Example code
 
-import nonogram
+import nonogram  
 import solver
 
 clues = (((1,2),(4,),(2,2),(1,),(1,)),((3,),(3,),(1,),(3,),(3,)))
 
-solved_puzzle = solver.Solver.solve(clues)
+solved_puzzle = solver.Solver.solve(clues)  
 solved_puzzle_grid = solved_puzzle.get_grid()
 
 ### Input
