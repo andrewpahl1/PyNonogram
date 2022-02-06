@@ -8,7 +8,7 @@ PyNonogram aims to quickly solve nonograms of any size using a combination of re
 
 ### Step-by-step
 
-1. Import nonogram.py and solver.py.
+1. Import solver.py.
 2. Create a tuple of clues that represent the nonogram to be solved (see Input section).
 3. Pass the tuple of clues to the Solver.solve function.
 4. A solved Nonogram object will be returned (see Output section).
