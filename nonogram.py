@@ -1,4 +1,4 @@
-from math import comb
+import math
 import re
 
 class Sequence:
@@ -67,7 +67,7 @@ class Sequence:
         if not clue:
             return 1
         n = length - (len(clue) - 1) - (sum(clue) - len(clue))
-        solution_count = comb(n, len(clue))
+        solution_count = math.comb(n, len(clue))
         return solution_count
 
 class Nonogram:

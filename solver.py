@@ -1,5 +1,5 @@
 import re
-from nonogram import Nonogram
+import nonogram
 
 class UnsolvableError(Exception):
     pass
@@ -40,10 +40,10 @@ class Solver:
     """Contains the solve method and its helper methods, used to find the values of all unknown cells in a Nonogram object."""
 
     @staticmethod
-    def check_regex(nonogram, pos):
+    def check_regex(ng, pos):
         """Given a nonogram and a set of (y,x) coordinates to a cell whose value is unknown, checks whether marking that cell as filled or unfilled invalidates the puzzle. If only one of the two values is valid, returns the values updated values of both sequences."""
-        current_row = nonogram.sequences["row"][pos[0]]
-        current_col = nonogram.sequences["col"][pos[1]]
+        current_row = ng.sequences["row"][pos[0]]
+        current_col = ng.sequences["col"][pos[1]]
         check_0_row = current_row.value[0:pos[1]] + "0" + current_row.value[pos[1]+1:]
         check_0_col = current_col.value[0:pos[0]] + "0" + current_col.value[pos[0]+1:]
         check_1_row = current_row.value[0:pos[1]] + "1" + current_row.value[pos[1]+1:]
@@ -60,111 +60,111 @@ class Solver:
             return check_1_row, check_1_col
 
     @staticmethod
-    def deduce(nonogram, guesses):
+    def deduce(ng, guesses):
         """Uses check_regex to attempt to solve the nonogram by deduction. Returns an integer counting the number of cells updated."""
         solved_count = 0
-        unsolved = nonogram.unsolved.copy()
+        unsolved = ng.unsolved.copy()
         for pos in unsolved:
-            if pos not in nonogram.unsolved:
+            if pos not in ng.unsolved:
                 continue
-            check_result = Solver.check_regex(nonogram, pos)
+            check_result = Solver.check_regex(ng, pos)
             if check_result == "either":
                 continue
             elif check_result == "error":
                 return -1
             else:
                 new_row, new_col = check_result
-                nonogram.update_sequences(pos, new_row, new_col)
+                ng.update_sequences(pos, new_row, new_col)
                 solved_count += 1
                 if len(guesses) > 0:
                     guesses[-1].dependent_cells.append(pos)
         return solved_count
 
     @staticmethod
-    def guess_cell(nonogram, guesses):
+    def guess_cell(ng, guesses):
         """Adds a new CellGuess object to the guesses list, updates the nonogram object to reflect this guess."""
-        pos = list(nonogram.unsolved)[0]
+        pos = list(ng.unsolved)[0]
         guesses.append(CellGuess(pos))
-        nonogram.update_at_pos(pos, "1")
+        ng.update_at_pos(pos, "1")
 
     @staticmethod
-    def guess_sequence(line_type, index, nonogram, guesses):
+    def guess_sequence(line_type, index, ng, guesses):
         """Adds a new SequenceGuess object to the guesses list, updates the nonogram object to reflect this guess."""
-        new_value = nonogram.sequences[line_type][index].solutions[0]
-        guesses.append(SequenceGuess(line_type, index, new_value, nonogram.sequences[line_type][index].value))
-        nonogram.update_single_sequence(line_type, index, new_value)
+        new_value = ng.sequences[line_type][index].solutions[0]
+        guesses.append(SequenceGuess(line_type, index, new_value, ng.sequences[line_type][index].value))
+        ng.update_single_sequence(line_type, index, new_value)
     
     @staticmethod
-    def revert_guess(nonogram, guess):
+    def revert_guess(ng, guess):
         """Given a nonogram object and a guess applied to that object, reverses all changes made to the nonogram as a result of that guess."""
         for cell in guess.dependent_cells:
-            nonogram.update_at_pos(cell, "x")
+            ng.update_at_pos(cell, "x")
         if isinstance(guess, SequenceGuess):
-            nonogram.update_single_sequence(guess.line_type, guess.index, guess.old_value)
+            ng.update_single_sequence(guess.line_type, guess.index, guess.old_value)
         elif isinstance(guess, CellGuess):
-            nonogram.update_at_pos(guess.pos, "x")
+            ng.update_at_pos(guess.pos, "x")
 
     @staticmethod
-    def get_next_guess(nonogram, guesses, revert):
+    def get_next_guess(ng, guesses, revert):
         """Determines the next step to take in the guess-and-check algorithm. Identifies when the nonogram is unsolvable."""
         if not guesses and revert:
             raise UnsolvableError("This nonogram cannot be solved.")
         if not guesses:
-            nonogram.update_known_solution_sets()
+            ng.update_known_solution_sets()
         if not revert:
-            for line_type, index, _ in nonogram.known_solution_sets:
-                if "x" in nonogram.sequences[line_type][index].value and (line_type, index) not in guesses:
-                    Solver.guess_sequence(line_type, index, nonogram, guesses)
+            for line_type, index, _ in ng.known_solution_sets:
+                if "x" in ng.sequences[line_type][index].value and (line_type, index) not in guesses:
+                    Solver.guess_sequence(line_type, index, ng, guesses)
                     return
-            Solver.guess_cell(nonogram, guesses)
+            Solver.guess_cell(ng, guesses)
             return
         last_guess = guesses.pop()
         if isinstance(last_guess, CellGuess):
-            Solver.get_next_cell_guess(nonogram, last_guess, guesses)
+            Solver.get_next_cell_guess(ng, last_guess, guesses)
         elif isinstance(last_guess, SequenceGuess):
-            Solver.get_next_sequence_guess(nonogram, last_guess, guesses)
+            Solver.get_next_sequence_guess(ng, last_guess, guesses)
     
     @staticmethod
-    def get_next_cell_guess(nonogram, last_guess, guesses):
+    def get_next_cell_guess(ng, last_guess, guesses):
         """Called when the last CellGuess lead to the nonogram being unsolvable. Reverts that guess and either changes its value to unfilled (if its value was previously filled) or reverts the last two guesses and makes a new guess (if both guessing filled and unfilled for the last cell made the nonogram unsolvable)."""
-        guess_value = nonogram.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
-        Solver.revert_guess(nonogram, last_guess)
+        guess_value = ng.sequences["row"][last_guess.pos[0]].value[last_guess.pos[1]]
+        Solver.revert_guess(ng, last_guess)
         if guess_value == "0":
-            Solver.get_next_guess(nonogram, guesses, True)
+            Solver.get_next_guess(ng, guesses, True)
         elif guess_value == "1":
             guesses.append(CellGuess(last_guess.pos))
-            nonogram.update_at_pos(last_guess.pos, "0")
+            ng.update_at_pos(last_guess.pos, "0")
         else:
             raise Exception("Error: a previous guess did not update the Nonogram")
     
     @staticmethod
-    def get_next_sequence_guess(nonogram, last_guess, guesses):
+    def get_next_sequence_guess(ng, last_guess, guesses):
         """Called when the last SequenceGuess lead to the nonogram being unsolvable. Either changes that guess to the next value in that sequence's solutions variable, or reverts the last two guesses and makes a new guess."""
-        last_guess_value = nonogram.sequences[last_guess.line_type][last_guess.index].value
-        solutions_list = nonogram.sequences[last_guess.line_type][last_guess.index].solutions
+        last_guess_value = ng.sequences[last_guess.line_type][last_guess.index].value
+        solutions_list = ng.sequences[last_guess.line_type][last_guess.index].solutions
         last_guess_index = solutions_list.index(last_guess_value)
-        Solver.revert_guess(nonogram, last_guess)
+        Solver.revert_guess(ng, last_guess)
         if last_guess_index + 1 < len(solutions_list):
             next_guess_value = solutions_list[last_guess_index + 1]
             guesses.append(SequenceGuess(last_guess.line_type, last_guess.index, next_guess_value, last_guess.old_value))
-            nonogram.update_single_sequence(last_guess.line_type, last_guess.index, next_guess_value)
+            ng.update_single_sequence(last_guess.line_type, last_guess.index, next_guess_value)
         else:
-            Solver.get_next_guess(nonogram, guesses, True)
+            Solver.get_next_guess(ng, guesses, True)
 
     @staticmethod
     def solve(clues):
         """Main function in the Solver class - updates the unknown values in a nonogram object using the Solver class' helper functions."""
-        nonogram = Nonogram(clues)
+        ng = nonogram.Nonogram(clues)
         guesses = list()
         while True:
-            deduction_result = Solver.deduce(nonogram, guesses)
+            deduction_result = Solver.deduce(ng, guesses)
             if deduction_result > 0:
                 continue
-            elif len(nonogram.unsolved) == 0:
-                return nonogram
+            elif len(ng.unsolved) == 0:
+                return ng
             elif deduction_result == 0:
-                Solver.get_next_guess(nonogram, guesses, False)
+                Solver.get_next_guess(ng, guesses, False)
             elif deduction_result == -1 and not guesses:
                 raise UnsolvableError("This nonogram cannot be solved.")
             else:
-                Solver.get_next_guess(nonogram, guesses, True)
+                Solver.get_next_guess(ng, guesses, True)
