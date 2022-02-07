@@ -1,5 +1,4 @@
 import unittest
-import nonogram
 import solver
 
 class SolvePuzzleSmall1(unittest.TestCase):
