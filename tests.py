@@ -18,8 +18,8 @@ class SolvePuzzleSmall2(unittest.TestCase):
 class SolvePuzzleSmall3(unittest.TestCase):
 
     def runTest(self):
-        actual_solution = solver.Solver.solve((((1,), (2, 2, 1), (1, 1, 1, 1), (2, 3), (4, 2)), ((5,), (1, 2), (1, 1), (1, 1), (3,), (2,), (4,))))
-        expected_solution = ((1, 1, 1, 1, 1), (0, 1, 0, 1, 1), (0, 0, 1, 0, 1), (0, 1, 0, 0, 1), (0, 1, 1, 1, 0), (0, 0, 0, 1, 1), (0, 1, 1, 1, 1))
+        actual_solution = solver.Solver.solve((((4,),(2,),(1,1,1),(1,),(1,1,1)),((3,1),(2,),(1,1,1),(1,),(3,))))
+        expected_solution = ((1, 1, 1, 0, 1), (1, 1, 0, 0, 0), (1, 0, 1, 0, 1), (1, 0, 0, 0, 0), (0, 0, 1, 1, 1))
         self.assertEqual(actual_solution.get_grid(), expected_solution)
 
 class SolvePuzzleMedium1(unittest.TestCase):
