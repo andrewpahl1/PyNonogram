@@ -2,7 +2,7 @@
 
 ## Overview
 
-PyNonogram aims to quickly solve nonograms of any size using a combination of regular expression matching and, when necessary, guessing-and-checking.
+PyNonogram aims to quickly solve nonograms of any size using a combination of regular expression matching and, when necessary, guessing and checking.
 
 ## How to use PyNonogram
 
