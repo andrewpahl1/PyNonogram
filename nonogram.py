@@ -15,8 +15,7 @@ class Sequence:
         self.value = self.get_initial_value()
         self.solutions_possible = self.get_possible_solution_count(clue, length)
         if self.solutions_possible <= max_solutions_to_find:
-            self.solutions = list()
-            self.get_possible_solutions(self.solutions, clue, length)
+            self.solutions = self.get_possible_solutions(clue, length)
         self.regex = self.get_regex()
 
     def __repr__(self):
@@ -50,16 +49,19 @@ class Sequence:
         return re.compile("^[0x]*?" + "[0x]+".join(regex) + "[0x]*$")
 
     @staticmethod
-    def get_possible_solutions(solutions, clue, length, prev=""):
+    def get_possible_solutions(clue, length, prev="", solutions=None):
         """Returns all possible completed value stings (no unknowns, just filled and unfilled cells) that match the sequences clue and length."""
+        if solutions == None:
+            solutions = list()
         if not clue:
             solutions.append(prev + "0" * length)
-            return
+            return solutions
         reserved_space = sum(clue[1:]) + len(clue[1:])
         for i in range(length - reserved_space - clue[0] + 1):
             new_length = length - (clue[0] + i + (len(clue[1:]) > 0))
             new_prev = prev + "0" * i + "1" * clue[0] + "0" * (len(clue[1:]) > 0)
-            Sequence.get_possible_solutions(solutions, clue[1:], new_length, new_prev)
+            Sequence.get_possible_solutions(clue[1:], new_length, new_prev, solutions)
+        return solutions
 
     @staticmethod
     def get_possible_solution_count(clue, length):
